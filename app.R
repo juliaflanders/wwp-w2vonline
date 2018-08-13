@@ -3,7 +3,7 @@
 # Created by Jonathan D. Fitzgerald
 #
 # Last updated: June 5, 2018
-
+library("rjson")
 library(shiny)
 library(magrittr)
 library(tidyverse)
@@ -12,24 +12,43 @@ library(wordVectors)
 library(DT)
 
 
-wwp_model = read.vectors("data/wwpData_df.bin")
+# wwp_model = read.vectors("data/wwpData_df.bin")
 # wwp_model_adorned <- read.vectors("data/adornedText.bin")
 # wwp_model_unadorned <- read.vectors("data/wwo-non-adorned.bin")
-fileList <- list.files("data",full.names = TRUE,pattern = "*.bin$")
-fileListNames <- list.files("data",full.names = FALSE,pattern = "*.bin$") # Create a list of files in a folder
+# fileList <- list.files("data",full.names = TRUE,pattern = "*.bin$")
+# fileListNames <- list.files("data",full.names = FALSE,pattern = "*.bin$") # Create a list of files in a folder
 list_models <- list()
-for(fn in fileList) {
+# for(fn in fileList) {
+# 
+#   print(fn)
+#   list_models[[fn]] <- read.vectors(fn)
+# }
+# 
 
-  print(fn)
-  list_models[[fn]] <- read.vectors(fn)
+json_file <- "data/catalog.json"
+json_data <- fromJSON(file=json_file)
+
+
+
+fileList <- c()
+list_clustering <- list()
+
+for(fn in json_data) {
+  print(fn$shortName)
+  print(fn$location)
+  val <- fn$shortName
+  fileList <- append(fileList, val)
+  list_models[[fn$shortName]] <- read.vectors(fn$location)
+  list_clustering [[fn$shortName]] <- kmeans( list_models[[fn$shortName]] , centers=150,iter.max = 40)
 }
+
 
 # names(list_models) <- fileListNames
 
 
 
 # pre-run clustering
-clustering = kmeans(wwp_model,centers=150,iter.max = 40)
+# clustering = kmeans(wwp_model,centers=150,iter.max = 40)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -117,7 +136,11 @@ ui <- fluidPage(
                     id = "clustering_panel",
                     column(9,
                            class = "resetrow",
-                           actionButton("clustering_reset_input", "Reset clusters"))
+                           actionButton("clustering_reset_input", "Reset clusters")
+                           # ,
+                           # downloadButton("csv_export", "Download CSV")
+                           )
+                    
 
                   ),
                   # Show a plot of the generated distribution
@@ -376,7 +399,7 @@ server <- function(input, output) {
   # Clustering tab
   output$clustering_table <- DT::renderDataTable(DT::datatable({
     data <- sapply(sample(1:150,10),function(n) {
-      paste0("<a target='_blank' href='http://wwo.wwp.northeastern.edu/WWO/search?keyword=",names(clustering$cluster[clustering$cluster==n][1:150]),"'>",names(clustering$cluster[clustering$cluster==n][1:150]),"</a>")
+      paste0("<a target='_blank' href='http://wwo.wwp.northeastern.edu/WWO/search?keyword=",names(list_clustering[[input$modelSelect[[1]]]]$cluster[list_clustering[[input$modelSelect[[1]]]]$cluster==n][1:150]),"'>",names(list_clustering[[input$modelSelect[[1]]]]$cluster[list_clustering[[input$modelSelect[[1]]]]$cluster==n][1:150]),"</a>")
     }) %>% as_data_frame()
   }, escape = FALSE, colnames=c(paste0("cluster_",1:10)), options = list(lengthMenu = c(10, 50, 100, 150), pageLength = 10,searching = TRUE)))
 
@@ -414,10 +437,31 @@ server <- function(input, output) {
   observeEvent(input$clustering_reset_input, {
     output$clustering_table <- DT::renderDataTable(DT::datatable({
       data <- sapply(sample(1:150,10),function(n) {
-        paste0("<a target='_blank' href='http://wwo.wwp.northeastern.edu/WWO/search?keyword=",names(clustering$cluster[clustering$cluster==n][1:150]),"'>",names(clustering$cluster[clustering$cluster==n][1:150]),"</a>")
+        paste0("<a target='_blank' href='http://wwo.wwp.northeastern.edu/WWO/search?keyword=",names(list_clustering[[input$modelSelect[[1]]]]$cluster[list_clustering[[input$modelSelect[[1]]]]$cluster==n][1:150]),"'>",names(list_clustering[[input$modelSelect[[1]]]]$cluster[list_clustering[[input$modelSelect[[1]]]]$cluster==n][1:150]),"</a>")
       }) %>% as_data_frame()
     }, escape = FALSE, colnames=c(paste0("cluster_",1:10)), options = list(lengthMenu = c(10, 50, 100, 150), pageLength = 10,searching = TRUE)))
   })
+  
+  
+  # output$downloadData <- downloadHandler(
+  #   print("data")
+  #   filename = function() {
+  #     paste(input$modelSelect[[1]], ".csv", sep = "")
+  #   },
+  #   content = function(file) {
+  #     write.csv(list_clustering[[input$modelSelect[[1]]]], file, row.names = FALSE)
+  #   }
+  # )
+  
+  
+  # observeEvent(input$csv_export, {
+  #   print("Export CSV")
+  #   
+  #   csv_download <- list_clustering[[input$modelSelect[[1]]]]$cluster[1:150]
+  #   print(csv_download)
+  # })
+  
+  
 
   #output$value <- renderPrint({ dataset() })
 }
