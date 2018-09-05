@@ -25,7 +25,7 @@ list_models <- list()
 # }
 # 
 
-json_file <- "data/catalog.json"
+json_file <- "data/wwoToolKit_catalog_json.json"
 json_data <- fromJSON(file=json_file)
 
 
@@ -34,12 +34,15 @@ fileList <- c()
 list_clustering <- list()
 
 for(fn in json_data) {
-  print(fn$shortName)
-  print(fn$location)
-  val <- fn$shortName
-  fileList <- append(fileList, val)
-  list_models[[fn$shortName]] <- read.vectors(fn$location)
-  list_clustering [[fn$shortName]] <- kmeans( list_models[[fn$shortName]] , centers=150,iter.max = 40)
+  if(fn$public == "true")
+  {
+    print(fn$shortName)
+    print(fn$location)
+    val <- fn$shortName
+    fileList <- append(fileList, val)
+    list_models[[fn$shortName]] <- read.vectors(fn$location)
+    list_clustering [[fn$shortName]] <- kmeans( list_models[[fn$shortName]] , centers=150,iter.max = 40)
+  }
 }
 
 

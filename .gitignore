@@ -5,3 +5,6 @@
 .gitignore
 /rsconnect
 .*
+test_catalog.json
+scratch.R
+.gitignore
