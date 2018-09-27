@@ -1,22 +1,5 @@
 {
 	
-
-  "VWWP+WWP Morphadorned": {
-    "shortName": "Morphed VWWP",
-    "location": "data/vwwp+wwo-adorned.bin",
-	"shortDescription" : "Morphadorned Victorian Women Writers Project Corpus",
-	"public" : "true",
-    "description": "We have parsed the TEI of the VWWP and extracted its body content. It has been further regularized with Morphadorner."
-  },
-  
-  "Humanist": {
-	  "shortName": "Humanist w2v Model",
-	  "location": "data/humanist.bin",
-	  "shortDescription": "Humanist w2v Model",
-	  "public": "true",
-	  "description": "Model of entire Humanist listserv"
-  },
-  
   "Early Humanist": {
 	  "shortName": "Early Humanist w2v Model",
 	  "location": "data/early_humanist.bin",
@@ -24,13 +7,32 @@
 	  "public": "true",
 	  "description": "Model of early Humanist listserv"	  
   },
-  
+ 
   "Late Humanist": {
 	  "shortName": "Late Humanist w2v Model",
 	  "location": "data/late_humanist.bin",
 	  "shortDescription": "Late Humanist w2v Model",
 	  "public": "true",
 	  "description": "Model of late Humanist listserv"	  
+  },
+
+
+  "VWWP+WWP Morphadorned": {
+    "shortName": "Morphed VWWP",
+    "location": "data/vwwp+wwo-adorned.bin",
+	"shortDescription" : "Morphadorned Victorian Women Writers Project Corpus",
+	"public" : "false",
+    "description": "We have parsed the TEI of the VWWP and extracted its body content. It has been further regularized with Morphadorner."
+  },
+  
+  "Humanist": {
+	  "shortName": "Humanist w2v Model",
+	  "location": "data/humanist.bin",
+	  "shortDescription": "Humanist w2v Model",
+	  "public": "false",
+	  "description": "Model of entire Humanist listserv"
   }
+
+
 
 }

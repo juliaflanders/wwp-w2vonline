@@ -1,4 +1,4 @@
-# Word Vector Analysis for Women Writers Online
+# Word Vector Analysis for Humanist
 #
 # Created by Jonathan D. Fitzgerald
 #
@@ -90,7 +90,7 @@ ui <- fluidPage(
     )),
 
   # Application title
-  titlePanel("Word Vector Analysis for Women Writers Online"),
+  titlePanel("Word Vector Analysis for Humanist"),
   sidebarLayout(
     sidebarPanel(width = 3,
                  selectInput("modelSelect", "Model",
